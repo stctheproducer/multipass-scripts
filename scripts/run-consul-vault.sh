@@ -50,13 +50,13 @@ cd $HOME/consul
 # Download files
 if [[ $node_type = "server" ]]
   then
-    curl -L -o server.hcl 'https://raw.githubusercontent.com/stctheproducer/multipass/develop/templates/dev/consul/server-vault.hcl'
+    curl -L -o server.hcl 'https://raw.githubusercontent.com/stctheproducer/multipass-scripts/develop/templates/dev/consul/server-vault.hcl'
     sudo mv server.hcl /etc/consul.d/server.hcl
     sudo chown consul:consul /etc/consul.d/server.hcl
     sudo chmod 0644 /etc/consul.d/server.hcl
 elif [[ $node_type = "client" ]]
   then
-    curl -L -o client.hcl 'https://raw.githubusercontent.com/stctheproducer/multipass/develop/templates/dev/consul/client-vault.hcl'
+    curl -L -o client.hcl 'https://raw.githubusercontent.com/stctheproducer/multipass-scripts/develop/templates/dev/consul/client-vault.hcl'
     sudo mv client.hcl /etc/consul.d/client.hcl
     sudo chown consul:consul /etc/consul.d/client.hcl
     sudo chmod 0644 /etc/consul.d/client.hcl
@@ -66,9 +66,9 @@ if [[ $type = "leader" ]]
   then
     mkdir policies
 
-    curl -L -o policies/node-policy.hcl 'https://raw.githubusercontent.com/stctheproducer/multipass/develop/policies/consul/node-policy.hcl'
+    curl -L -o policies/node-policy.hcl 'https://raw.githubusercontent.com/stctheproducer/multipass-scripts/develop/policies/consul/node-policy.hcl'
 
-    curl -L -o policies/vault-service-policy.hcl 'https://raw.githubusercontent.com/stctheproducer/multipass/develop/policies/consul/vault-service-policy.hcl'
+    curl -L -o policies/vault-service-policy.hcl 'https://raw.githubusercontent.com/stctheproducer/multipass-scripts/develop/policies/consul/vault-service-policy.hcl'
   else
     cat << JOIN | sudo tee /etc/consul.d/join.hcl
 retry_join = ["$leader_addr"]

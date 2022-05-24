@@ -34,15 +34,15 @@ runcmd:
   - cd $HOME
   - mkdir consul nomad vault
   - chown $USER:$USER -R consul nomad vault
-  - curl -L -o cloud-init.sh 'https://raw.githubusercontent.com/stctheproducer/multipass/develop/scripts/cloud-init.sh'
+  - curl -L -o cloud-init.sh 'https://raw.githubusercontent.com/stctheproducer/multipass-scripts/develop/scripts/cloud-init.sh'
   - bash cloud-init.sh | tee cloud-init-output.log
   # Download config scripts
-  - curl -L -o nomad/configure-nomad.sh 'https://raw.githubusercontent.com/stctheproducer/multipass/develop/scripts/configure-nomad.sh'
-  - curl -L -o vault/configure-vault.sh 'https://raw.githubusercontent.com/stctheproducer/multipass/develop/scripts/configure-vault.sh'
-  - curl -L -o consul/configure-consul-vault.sh 'https://raw.githubusercontent.com/stctheproducer/multipass/develop/scripts/configure-consul-vault.sh'
-  - curl -L -o consul/configure-consul.sh 'https://raw.githubusercontent.com/stctheproducer/multipass/develop/scripts/configure-consul.sh'
+  - curl -L -o nomad/configure-nomad.sh 'https://raw.githubusercontent.com/stctheproducer/multipass-scripts/develop/scripts/configure-nomad.sh'
+  - curl -L -o vault/configure-vault.sh 'https://raw.githubusercontent.com/stctheproducer/multipass-scripts/develop/scripts/configure-vault.sh'
+  - curl -L -o consul/configure-consul-vault.sh 'https://raw.githubusercontent.com/stctheproducer/multipass-scripts/develop/scripts/configure-consul-vault.sh'
+  - curl -L -o consul/configure-consul.sh 'https://raw.githubusercontent.com/stctheproducer/multipass-scripts/develop/scripts/configure-consul.sh'
   # Create consul-vault cluster
-  - curl -L -o run-consul-vault.sh 'https://raw.githubusercontent.com/stctheproducer/multipass/develop/scripts/run-consul-vault.sh'
+  - curl -L -o run-consul-vault.sh 'https://raw.githubusercontent.com/stctheproducer/multipass-scripts/develop/scripts/run-consul-vault.sh'
   # Server
   - bash run-consul-vault.sh dc1 consul-vault server 0
   # - bash run-consul-vault.sh dc1 consul-vault server 1 $server-1-ip $gossip_key $token
