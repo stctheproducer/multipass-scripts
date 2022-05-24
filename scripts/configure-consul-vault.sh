@@ -26,7 +26,7 @@ if [[ $type = "leader" ]]
 }
 GOSSIP
 
-  cat << ACL sudo tee -a /etc/consul.d/acl.hcl
+  cat << ACL | sudo tee -a /etc/consul.d/acl.hcl
 acl {
   enabled = true
   default_policy = "deny"
@@ -38,7 +38,7 @@ ACL
 
   echo -e "\nclient_addr = \"0.0.0.0\"" | sudo tee -a /etc/consul.d/server.hcl
 
-cat << UI | tee -a /etc/consul.d/server.hcl
+cat << UI | sudo tee -a /etc/consul.d/server.hcl
 
 ui_config {
   enabled = true
@@ -46,6 +46,10 @@ ui_config {
 UI
 
   # Create certificates
+  if [[ -d /opt/consul/tls ]]
+    then
+      sudo rm -rf /opt/consul/tls
+  fi
   sudo mkdir -p /opt/consul/tls
 
   cd /opt/consul/tls
@@ -64,7 +68,11 @@ UI
 
   sudo chown consul:consul /opt/consul/tls/*.pem
   
-  sudo rm /etc/consul.d/join.hcl
+  if [[ -e /etc/consul.d/join.hcl ]]
+    then
+      sudo rm /etc/consul.d/join.hcl
+  fi
+
 elif [[ $type = "follower" ]]
   then
     echo -e "\nclient_addr = \"0.0.0.0\"" | sudo tee -a /etc/consul.d/server.hcl

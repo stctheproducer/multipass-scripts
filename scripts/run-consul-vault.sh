@@ -13,9 +13,13 @@ datacenter=$1
 node_name=$2
 node_type=$3
 node_number=$4
-leader_addr=$5
-enc_key=$6
-token=$7
+
+if [[ $# -ge 5 ]]
+  then
+    leader_addr=$5
+    enc_key=$6
+    token=$7
+fi
 
 # Rename node and set datacenter
 sudo sed -i "s|#datacenter = \"my-dc-1\"|datacenter = \"$datacenter\"|g" /etc/consul.d/consul.hcl
@@ -64,7 +68,10 @@ fi
 
 if [[ $type = "leader" ]]
   then
-    mkdir policies
+    if [[ ! -d policies ]]
+      then
+        mkdir policies
+    fi
 
     curl -L -o policies/node-policy.hcl 'https://raw.githubusercontent.com/stctheproducer/multipass-scripts/develop/policies/consul/node-policy.hcl'
 
@@ -85,7 +92,7 @@ BASH
   
     sed -i "s|#encrypt = \"...\"|encrypt = \"$enc_key\"|g" /etc/consul.d/consul.hcl
     
-    cat << ACL sudo tee /etc/consul.d/acl.hcl
+    cat << ACL | sudo tee /etc/consul.d/acl.hcl
 acl {
   enabled = true
   default_policy = "deny"
@@ -93,6 +100,21 @@ acl {
 
   tokens {
     agent = "$token"
+  }
+}
+ACL
+fi
+
+if [[ $type = "follower" ]]
+then
+  cat << ACL | sudo tee /etc/consul.d/acl.hcl
+acl {
+  enabled = true
+  default_policy = "deny"
+  enable_token_persistence = true
+
+  tokens {
+    default = "$token"
   }
 }
 ACL
