@@ -1,0 +1,61 @@
+#cloud-config
+package_update: true
+
+package_upgrade: true
+
+packages:
+  - curl
+  - jq
+  - git
+  - docker.io
+
+# create the docker group
+groups:
+  - docker
+
+users:
+  # - default
+  - name: username
+    # mkpasswd -hash sha512 -rounds 4096
+    # Password is 'ubuntu'
+    passwd: "$6$rounds=4096$1ST6SKGSnHtMY4oi$kZcKZ2fdsbZTVj2HkVCuhXDOlmBNmtDvfN/Udf1uoGUfNyR9gs0lC/vViKkbqQGxEeVNWtNGSu6qR244vzxVi0"
+    shell: /bin/bash
+    lock-passwd: false
+    ssh_pwauth: false
+    chpasswd: { expire: False }
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: users, admin, docker
+    ssh_authorized_keys:
+      - ssh-rsa ...
+
+runcmd:
+  - export HOME='/home/username'
+  - export USER='username'
+  - cd $HOME
+  - mkdir consul nomad vault
+  - chown $USER:$USER -R consul nomad vault
+  - curl -L -o cloud-init.sh 'https://raw.githubusercontent.com/stctheproducer/multipass/develop/scripts/cloud-init.sh'
+  - bash cloud-init.sh | tee cloud-init-output.log
+  # Download config scripts
+  - curl -L -o nomad/configure-nomad.sh 'https://raw.githubusercontent.com/stctheproducer/multipass/develop/scripts/configure-nomad.sh'
+  - curl -L -o vault/configure-vault.sh 'https://raw.githubusercontent.com/stctheproducer/multipass/develop/scripts/configure-vault.sh'
+  - curl -L -o consul/configure-consul-vault.sh 'https://raw.githubusercontent.com/stctheproducer/multipass/develop/scripts/configure-consul-vault.sh'
+  - curl -L -o consul/configure-consul.sh 'https://raw.githubusercontent.com/stctheproducer/multipass/develop/scripts/configure-consul.sh'
+  # Create consul-vault cluster
+  - curl -L -o run-consul-vault.sh 'https://raw.githubusercontent.com/stctheproducer/multipass/develop/scripts/run-consul-vault.sh'
+  # Server
+  - bash run-consul-vault.sh dc1 consul-vault server 0
+  # - bash run-consul-vault.sh dc1 consul-vault server 1 $server-1-ip $gossip_key $token
+  # Client
+  # - bash run-consul-vault.sh dc1 consul-vault client 0 $server-1-ip $gossip_key $token
+
+final_message: "The system is finally up, after $UPTIME seconds"
+
+autoinstall:
+  version: 1
+  early-commands:
+    - ping -c5 172.16.153.1
+  identity:
+    hostname: consul-server-0
+  late-commands:
+    - echo "Done installing after $UPTIME seconds!"

@@ -1,0 +1,43 @@
+ssh_authorized_keys:
+  - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDsPvu0NNJHk/qFypZVRSjQ7CMq3Gpd14qzki1crvqJz0TMR6C4J0CxbvJHQYgRzI0o8P99V8jH3T/omqBhqYtkRE2nr361vrtFziUUpyxciayNONDiKkLdtdv993+dGDfmm1p3vYWMuXJ9aXPJdudiFmgB8TOwvKiwB6LD3CMfScvJg9JWkDVY3P7cEDjZ9Na/PIGoYHhRb6Sh87pN1pdgNWfGh46CWcf7GHwZeWYnmVJh4Ojy3PRUOhrpjzFE7Nh86d+lUvaa/xIdHJ9lsQ2Ssf6BzLweubEplAdiGOLFCU/nqdTng+nwWKJWgAItgSulrTsUl6oi6YBUjlSmjmM28FQVIpuHpuhDseQAIncFGoRq20ASlCzcea38z1AEZfcZeJ7iGYQU4P74rurpdEcpMq+De7mPVS/slhgB1KMCexWo42ZmrofhOY1JZ8HRnSaelSirNatJ2T3mlqPkHVF3E0ulNsq//IjUMrAlqe6NR7rHMiPelIq1w0ZxuWdEbNQJSN7QfN/binsfSiZ0EXv8zYiuH4MZrZikpfGse0OdeQHpZnG/zH2fKS+ZEiBrHjxf346JLn7XPh5xSZbjKybVC/++VV14m5zoMBVfMwPsq66UwPaWTaVd02EYCvwdQklvdW7bAXwWrimShIZcAWeVHtqkR6krLI681s5qCBgVxw== kn0wsn0shirt@Kn0w$N0$hirt’s MacBook Pro
+
+manage_resolv_conf: false
+
+# resolv_conf:
+#   nameservers: ["1.1.1.1", "8.8.4.4", "8.8.8.8"]
+
+package_upgrade: true
+
+packages:
+  - curl
+  - jq
+  - git
+#   - docker
+#   - nomad
+#   - vault
+#   - consul
+
+# write_files:
+#   - content: |
+#         retry_join = ["put your nomad server ip between these quotes"]
+#     path: /etc/consul.d/join.hcl
+
+runcmd:
+  # Nameservers
+  - echo "nameserver 1.1.1.1" | sudo tee /etc/resolv.conf
+#   - mkdir /home/ubuntu/install-files
+#   - cd /home/ubuntu/install-files
+#   # Install HashiCorp products
+#   - curl -fsSL "https://apt.releases.hashicorp.com/gpg" | sudo apt-key add -
+#   - sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+#   - sudo apt-get update
+#   - sudo apt-get install nomad consul vault
+#   # Install Go
+#   - wget "https://go.dev/dl/go1.17.5.linux-amd64.tar.gz"
+#   - tar -C /usr/local/ -xzf go1.17.5.linux-amd64.tar.gz
+#   # Install Docker
+#   # - curl -fsSL https://get.docker.com -o get-docker.sh
+#   # - sudo sh get-docker.sh
+#   # - sudo apt-get upgrade -y
+
+# final_message: "The system is finally up, after $UPTIME seconds"
