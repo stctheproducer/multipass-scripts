@@ -85,7 +85,7 @@ BASH
   
     sed -i "s|#encrypt = \"...\"|encrypt = \"$enc_key\"|g" /etc/consul.d/consul.hcl
     
-    cat << ACL sudo tee -a /etc/consul.d/acl.hcl
+    cat << ACL sudo tee /etc/consul.d/acl.hcl
 acl {
   enabled = true
   default_policy = "deny"
@@ -98,7 +98,11 @@ acl {
 ACL
 fi
 
-bash configure-consul-vault.sh $datacenter $type $node_number
+# Assign bind address
+instance_address=$(hostname -I | awk '{print $1}')
+sudo sed -i "s|#bind_addr = \"0.0.0.0\"|bind_addr = \"$instance_address\"|g" /etc/consul.d/consul.hcl
+
+bash configure-consul-vault.sh $datacenter $type $node_number | tee $HOME/configure-consul-vault-output.log
 
 
 

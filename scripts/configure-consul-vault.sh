@@ -12,12 +12,8 @@ fi
 datacenter=$1
 type=$2
 node=$3
-instance_address=$(hostname -I | awk '{print $1}')
 
 cd $HOME/consul
-
-# Assign bind address
-sudo sed -i "s|#bind_addr = \"0.0.0.0\"|bind_addr = \"$instance_address\"|g" /etc/consul.d/consul.hcl
 
 if [[ $type = "leader" ]]
   then
@@ -73,7 +69,8 @@ elif [[ $type = "follower" ]]
   then
     echo -e "\nclient_addr = \"0.0.0.0\"" | sudo tee -a /etc/consul.d/server.hcl
 
-    sudo sed -i "s|consul-0|consul-\"$node\"|g" /etc/consul.d/server.hcl
+    sudo sed -i "s|server-consul-0.pem|server-consul-$node.pem|g" /etc/consul.d/server.hcl
+    sudo sed -i "s|server-consul-0-key.pem|server-consul-$node-key.pem|g" /etc/consul.d/server.hcl
 fi
 
 cat << 'SERVICE' | sudo tee /etc/systemd/system/consul.service
@@ -139,6 +136,14 @@ BASH
 
   # On all Consul Servers
   consul acl set-agent-token -token=$(cat bootstrap_token.json | jq -r '.Token') agent $(cat payload.json | jq -r '.Token')
+  elif [[ $type = "follower" ]]
+    then
+    cat << BASH | tee -a $HOME/.bashrc
+
+  export CONSUL_CACERT=/opt/consul/tls/consul-agent-ca.pem
+  export CONSUL_CLIENT_CERT=/opt/consul/tls/$datacenter-server-consul-$node.pem
+  export CONSUL_CLIENT_KEY=/opt/consul/tls/$datacenter-server-consul-$node-key.pem
+BASH
 fi
 
 exit 0

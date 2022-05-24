@@ -72,6 +72,17 @@ UI
   sudo chown consul:consul /opt/consul/tls/*.pem
   
   sudo rm /etc/consul.d/join.hcl
+
+  export CONSUL_CACERT=/opt/consul/tls/consul-agent-ca.pem
+  export CONSUL_CLIENT_CERT=/opt/consul/tls/$datacenter-server-consul-0.pem
+  export CONSUL_CLIENT_KEY=/opt/consul/tls/$datacenter-server-consul-0-key.pem
+
+  cat << BASH | tee -a $HOME/.bashrc
+
+  export CONSUL_CACERT=/opt/consul/tls/consul-agent-ca.pem
+  export CONSUL_CLIENT_CERT=/opt/consul/tls/$datacenter-server-consul-0.pem
+  export CONSUL_CLIENT_KEY=/opt/consul/tls/$datacenter-server-consul-0-key.pem
+BASH
 elif [[ $type = "follower" ]]
   then
     cat << ACL sudo tee -a /etc/consul.d/acl.hcl
@@ -84,10 +95,22 @@ ACL
 
     echo -e "\nclient_addr = \"0.0.0.0\"" | sudo tee -a /etc/consul.d/server.hcl
 
-    sudo sed -i "s|consul-0|consul-\"$node\"|g" /etc/consul.d/server.hcl
+    sudo sed -i "s|server-consul-0.pem|server-consul-$node.pem|g" /etc/consul.d/server.hcl
+    sudo sed -i "s|server-consul-0-key.pem|server-consul-$node-key.pem|g" /etc/consul.d/server.hcl
 
     enc_key=$(cat $HOME/consul/gossip_key.json | jq '.gossip_key')
     sed -i "s|#encrypt = \"...\"|encrypt = $enc_key|g" /etc/consul.d/consul.hcl
+
+  export CONSUL_CACERT=/opt/consul/tls/consul-agent-ca.pem
+  export CONSUL_CLIENT_CERT=/opt/consul/tls/$datacenter-server-consul-$node.pem
+  export CONSUL_CLIENT_KEY=/opt/consul/tls/$datacenter-server-consul-$node-key.pem
+
+  cat << BASH | tee -a $HOME/.bashrc
+
+  export CONSUL_CACERT=/opt/consul/tls/consul-agent-ca.pem
+  export CONSUL_CLIENT_CERT=/opt/consul/tls/$datacenter-server-consul-$node.pem
+  export CONSUL_CLIENT_KEY=/opt/consul/tls/$datacenter-server-consul-$node-key.pem
+BASH
   else
     enc_key=$(cat $HOME/consul/gossip_key.json | jq '.gossip_key')
     sed -i "s|#encrypt = \"...\"|encrypt = $enc_key|g" /etc/consul.d/consul.hcl
@@ -130,18 +153,6 @@ if [[ $type = "leader" ]]
   sudo systemctl start consul
   echo "Consul successfully installed..."
   sleep 5
-
-  export CONSUL_CACERT=/opt/consul/tls/consul-agent-ca.pem
-  export CONSUL_CLIENT_CERT=/opt/consul/tls/$datacenter-server-consul-0.pem
-  export CONSUL_CLIENT_KEY=/opt/consul/tls/$datacenter-server-consul-0-key.pem
-
-  cat << BASH | tee -a $HOME/.bashrc
-
-  export CONSUL_CACERT=/opt/consul/tls/consul-agent-ca.pem
-  export CONSUL_CLIENT_CERT=/opt/consul/tls/$datacenter-server-consul-0.pem
-  export CONSUL_CLIENT_KEY=/opt/consul/tls/$datacenter-server-consul-0-key.pem
-  
-BASH
 
   consul acl bootstrap  -format=json | jq '{ Token: .SecretID}' > bootstrap_token.json
   chmod 0644 bootstrap_token.json

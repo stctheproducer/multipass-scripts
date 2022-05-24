@@ -21,6 +21,10 @@ sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(l
 
 sudo apt update && sudo apt install nomad consul consul-template vault waypoint boundary -y
 
+sudo usermod -aG nomad $USER
+sudo usermod -aG consul $USER
+sudo usermod -aG vault $USER
+
 # echo "# Installing Dnsmasq..."
 
 # sudo apt -y install dnsmasq-base dnsmasq
