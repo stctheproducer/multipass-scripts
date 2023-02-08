@@ -15,6 +15,12 @@ node=$3
 
 cd $HOME/consul
 
+if [[ -d /opt/consul/tls ]]
+  then
+    sudo rm -rf /opt/consul/tls
+fi
+sudo mkdir -p /opt/consul/tls
+
 if [[ $type = "leader" ]]
   then
   
@@ -46,12 +52,6 @@ ui_config {
 UI
 
   # Create certificates
-  if [[ -d /opt/consul/tls ]]
-    then
-      sudo rm -rf /opt/consul/tls
-  fi
-  sudo mkdir -p /opt/consul/tls
-
   cd /opt/consul/tls
 
   # Create the certificate authority

@@ -6,7 +6,8 @@ ui = true
 #disable_mlock = true
 
 storage "file" {
-  path = "/opt/vault/data"
+  node_id = "${node_id}"
+  path    = "/opt/vault/data"
 }
 
 #storage "consul" {
@@ -17,16 +18,18 @@ storage "file" {
 # HTTP listener
 #listener "tcp" {
 #  address = "127.0.0.1:8200"
-#  tls_disable = 1
+#  tls_disable = "true"
 #}
 
 # HTTPS listener
 listener "tcp" {
-  address            = "0.0.0.0:8200"
-  tls_cert_file      = "/opt/vault/tls/vault-cert.pem"
-  tls_key_file       = "/opt/vault/tls/vault-key.pem"
-  tls_client_ca_file = "/opt/vault/tls/vault-ca.pem"
+  address       = "0.0.0.0:8200"
+  tls_cert_file = "/opt/vault/tls/tls.crt"
+  tls_key_file  = "/opt/vault/tls/tls.key"
 }
+
+api_addr     = "${api_addr}:8200"
+cluster_addr = "${cluster_addr}:8201"
 
 # Enterprise license_path
 # This will be required for enterprise as of v1.8

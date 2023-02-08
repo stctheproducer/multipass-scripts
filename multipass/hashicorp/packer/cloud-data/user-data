@@ -1,0 +1,18 @@
+#cloud-config
+ssh_pwauth: true
+users:
+  - default
+  - name: packer
+    gecos: packer
+    primary_group: hashicorp
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: users, admin
+    ssh_import_id:
+    # passwd: $6$rounds=4096$XxQGokSw4FI8unZF$lAnQ0ZSMuCvSlv.rFjcxOpyAZr/ZDwtaI/X6BSSH0wtKngvprmgr9nvSMV/dBzE.TJ7Tvd8y0.T50dW5Bi1vf/
+    passwd: $6$rounds=4096$ADv7tz3KPSLefoEu$8ZeojM2n/l44yh.ZMyj.Nsipe6udoX5G8wq6H9GMisRAP0DJn5GIwAMm01r0YY.FGtm5LqCEdGVRMGGKGXal80
+    lock_passwd: false
+    ssh_authorized_keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDrGfRcCfTT32whxGpOLov2I/SujSULbIHQpSyx51y3M5arTvSN823zIWID3stAl+kNCU3OTxGPKRrFDnxkGHoFNdgzbbSbR8bDHbTkwv+lz0tTBBeBy/5+jftx3GQ6Dk+o9WJCNcseua/hKFOj1Wq9hpc92dZqGE9mjmHBY+xhAfMK/M6JjAgCCzACNcVg0GMJatf1B11O9BY974QKfJvvUPhcgANJIip0W2VuFOxvnUHU8RJLyiZARbaHZbXdo/WZ/Uy9rmc4lxlQFoT2ydFCphWmh64ZMeRpqA2AcCrqaP/qRyq5eohw5GqXEtxS1dStfhAUmO7cueijmdpPay+PKYh7TiORpDGyvxMxXx17iJGYs+EMCcR+6ZMnaGxXs9FoAg3KPslv1Q6C4Rd1+wzxaExErjx9q/ihvhFAQCBpoUeRGbmcTAXp4KRhOHUwxKcMIKSAAimoZkZ1+WPiG/+EGckfxA8bFtPzsuJgKcXQFvvzFEFbR4ZYvxubuM6oKCk= multipass-packer
+apt:
+  preserve_sources_list: true
+package_update: false
